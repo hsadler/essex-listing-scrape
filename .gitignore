@@ -1,0 +1,9 @@
+
+# ignore project config file
+config.py
+
+# ignore compiled python files
+*.pyc
+
+# ignore log files
+*.log
