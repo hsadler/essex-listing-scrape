@@ -16,10 +16,10 @@ class Email():
 
     def __init__(self, recipients, subject, body):
 
-        self.user = config.email_sender['email']
-        self.password = config.email_sender['password']
+        self.user = config.sender['email']
+        self.password = config.sender['password']
 
-        self.recipients = recipients
+        self.recipients = config.recipients
         self.subject = subject
         self.body = body
 
