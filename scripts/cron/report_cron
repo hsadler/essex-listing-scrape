@@ -1,0 +1,4 @@
+
+
+# scrape and send email report 10am every day
+0 18 * * * cd git/essex-listing-scrape/ && sh scrape_and_email_report.sh
