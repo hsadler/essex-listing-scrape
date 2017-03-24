@@ -4,6 +4,7 @@
 # Scrape controller
 
 import requests
+import sys
 from models.email import Email
 from models.apt_listing import AptListing
 
@@ -16,7 +17,8 @@ class Scraper():
 
 
     @staticmethod
-    def essex_listings_scrape(date, appartment_criteria, property_location, property_code):
+    def essex_listings_scrape(date, property_location, property_code,
+        unit_criteria=[], rent_max_criteria=float('inf')):
 
         # build scrape url
         base_url = 'http://www.essexapartmenthomes.com/api/get-available/'
@@ -29,10 +31,11 @@ class Scraper():
         # filter out the units that meet the criteria
         filtered_listings = []
         for unit_type in listings:
-            if unit_type['bed_bath'] in appartment_criteria:
+            if unit_type['bed_bath'] in unit_criteria:
                 for floor_plan in unit_type['floorplans']:
                     for unit in floor_plan['units']:
-                        filtered_listings.append(unit)
+                        if unit['rent'] <= rent_max_criteria:
+                            filtered_listings.append(unit)
 
         # collect apartment instances
         apartments = []
