@@ -7,3 +7,6 @@ config.py
 
 # ignore log files
 *.log
+
+# ignore json files
+*.json
