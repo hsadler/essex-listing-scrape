@@ -68,7 +68,6 @@ def poll_for_new_listings_and_email_report():
         with open('data/daily_apartments.json', 'w') as apt_file:
             json.dump(daily_listings, apt_file, indent=4)
 
-
         # get new listings instances
         new_listings_instances = []
         for listing_dict in new_listings:
@@ -85,7 +84,6 @@ def poll_for_new_listings_and_email_report():
                 )
             )
 
-
         # send urgent email with new listings
         email_body = '\n\n'.join(
             [apt.get_formatted_string() for apt in new_listings_instances]
@@ -100,7 +98,6 @@ def poll_for_new_listings_and_email_report():
 
     else:
         print 'No new listings found...'
-
 
 
 
