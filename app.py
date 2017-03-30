@@ -25,7 +25,7 @@ def scrape_and_email_report():
     with open('data/daily_apartments.json', 'w') as apt_file:
         json.dump(apt_data, apt_file, indent=4)
 
-    construct and send email
+    # construct and send email
     email_body = '\n\n'.join([apt.get_formatted_string() for apt in apartments])
 
     email = Email(
