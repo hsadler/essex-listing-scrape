@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from controllers.scraper import Scraper
+from models.apt_listing import AptListing
 from models.email import Email
 
 import config
@@ -42,10 +43,12 @@ def poll_for_new_listings_and_email_report():
     # scrape
     apartments = get_listings_scrape()
 
+    # TODO: MOVE A LOT OF THIS LOGIC TO A CONTROLLER
+
     # gather apartment data as dictionaries
     polled_apt_data = []
     for apt in apartments:
-        apt_data.append(apt.__dict__)
+        polled_apt_data.append(apt.__dict__)
 
     # compare to daily saved data and gather new listings
     new_listings = []
@@ -54,19 +57,39 @@ def poll_for_new_listings_and_email_report():
         daily_listings = json.load(apt_file)
 
     for listing in polled_apt_data:
-        if listing in daily_listings:
+        if listing not in daily_listings:
             new_listings.append(listing)
 
 
     if len(new_listings) > 0:
 
-        # save any new listings in daly data file
+        # add any new listings in daily data file
         daily_listings = daily_listings + new_listings
         with open('data/daily_apartments.json', 'w') as apt_file:
             json.dump(daily_listings, apt_file, indent=4)
 
+
+        # get new listings instances
+        new_listings_instances = []
+        for listing_dict in new_listings:
+            new_listings_instances.append(
+                AptListing(
+                    property_location=listing_dict['property_location'],
+                    baths=listing_dict['baths'],
+                    beds=listing_dict['beds'],
+                    rent=listing_dict['rent'],
+                    square_feet=listing_dict['square_feet'],
+                    amenities_display=listing_dict['amenities_display'],
+                    available_date=listing_dict['available_date'],
+                    apply_link=listing_dict['apply_link']
+                )
+            )
+
+
         # send urgent email with new listings
-        email_body = '\n\n'.join([apt.get_formatted_string() for apt in new_listings])
+        email_body = '\n\n'.join(
+            [apt.get_formatted_string() for apt in new_listings_instances]
+        )
 
         email = Email(
             recipients=config.recipients,
@@ -74,6 +97,10 @@ def poll_for_new_listings_and_email_report():
             body=email_body
         )
         email.send()
+
+    else:
+        print 'No new listings found...'
+
 
 
 
